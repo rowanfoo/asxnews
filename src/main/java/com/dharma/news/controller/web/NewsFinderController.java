@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 public class NewsFinderController {
@@ -34,6 +35,15 @@ public class NewsFinderController {
         System.out.println("--------------search " + code);
         return newsRepo.findAll(QNews.news.code.eq(code).and(QNews.news.date.eq(LocalDate.parse(date))));
     }
+
+    @GetMapping("/news/codes/{code}")
+    public Iterable<News> search(@PathVariable List<String> code) {
+        System.out.println("--------------search++no date " + code);
+        code.forEach(a -> System.out.println("----mycodes-----" + a));
+//        return null;
+        return newsRepo.findAll(QNews.news.code.in(code));
+    }
+
 
 //    @PostMapping("/search")
 //    public String search(Model model, @RequestParam Map<String, String> params) {
