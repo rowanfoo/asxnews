@@ -4,17 +4,17 @@ import com.dharma.news.data.entity.News;
 import com.dharma.news.data.entity.QNews;
 import com.dharma.news.data.repo.NewsRepo;
 import com.dharma.news.service.ElasticNewsWebService;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 public class NewsFinderController {
     @Autowired
     ElasticNewsWebService elasticNewsWebService;
@@ -30,11 +30,29 @@ public class NewsFinderController {
     }
 
 
-    @GetMapping("/news/code/{code}")
-    public Iterable<News> search(@PathVariable String code, @RequestParam String date) {
+    @GetMapping("/news/code/{code}/date/{date}")
+    public Iterable<News> search(@PathVariable String code, @PathVariable String date) {
         System.out.println("--------------search " + code);
         return newsRepo.findAll(QNews.news.code.eq(code).and(QNews.news.date.eq(LocalDate.parse(date))));
     }
+
+    @GetMapping("/news/code/{code}")
+    public Iterator<News> code(@PathVariable String code) {
+        System.out.println("--------------search " + code);
+        List<News> list = Lists.newArrayList(newsRepo.findAll(QNews.news.code.eq(code)));
+        Iterator<News> itr = list.stream().sorted((a, b) -> {
+            return b.getDate().compareTo(a.getDate());
+        }).iterator();
+
+//        itr.forEachRemaining(a->{
+//            System.out.println("-------------------a-----------"+a);
+//        });
+
+        return itr;
+
+//        return newsRepo.findAll(QNews.news.code.eq(code) )  ;
+    }
+
 
     @GetMapping("/news/codes/{code}")
     public Iterable<News> search(@PathVariable List<String> code) {

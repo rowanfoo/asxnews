@@ -2,8 +2,8 @@ package com.dharma.news;
 
 import com.dharma.news.data.repo.NewsRepo;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -12,7 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -28,20 +29,20 @@ public class DemoApplication implements CommandLineRunner {
     @Value("${holidays}")
     String holidays;
 
-    @Bean
-    public WebDriver webdriver() {
-        File src = new File(seleniumpath);
-
-        System.out.println("START  AsxNewsChromeBrowser: ");
-        System.setProperty("webdriver.chrome.driver", src.getAbsolutePath());
-
-        WebDriver driver;
-        ChromeOptions ChromeOptions = new ChromeOptions();
-        ChromeOptions.addArguments("--headless", "window-size=1024,768", "--no-sandbox");
-        driver = new ChromeDriver(ChromeOptions);
-        driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS); // just after you have initiated browser
-        return driver;
-    }
+//    @Bean
+//    public WebDriver webdriver() {
+//        File src = new File(seleniumpath);
+//
+//        System.out.println("START  AsxNewsChromeBrowser: ");
+//        System.setProperty("webdriver.chrome.driver", src.getAbsolutePath());
+//
+//        WebDriver driver;
+//        ChromeOptions ChromeOptions = new ChromeOptions();
+//        ChromeOptions.addArguments("--headless", "window-size=1024,768", "--no-sandbox");
+//        driver = new ChromeDriver(ChromeOptions);
+//        driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS); // just after you have initiated browser
+//        return driver;
+//    }
 
     @Bean
     public ArrayList<LocalDate> holidays() {
@@ -57,6 +58,35 @@ public class DemoApplication implements CommandLineRunner {
         return arr;
 
     }
+
+    @Value("${selenium.weburl}")
+    String weburl;
+
+
+    @Bean
+    public WebDriver webdriver() {
+        DesiredCapabilities dcap = DesiredCapabilities.chrome();
+        String driverPath = System.getProperty("user.dir") + "/exe/chromedriver";
+        System.setProperty("webdriver.chrome.driver", driverPath);
+
+        // You should check the Port No here.
+        URL gamelan = null;
+        try {
+            System.out.println("------------------" + weburl);
+            gamelan = new URL(weburl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        WebDriver driver = new RemoteWebDriver(gamelan, dcap);
+        driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS);
+//        // Get URL
+//        driver.get("https://www.google.com/");
+//        // Print Title
+//        System.out.println(driver.getTitle());
+
+        return driver;
+    }
+
 
     @Autowired
     NewsRepo newsRepo;
