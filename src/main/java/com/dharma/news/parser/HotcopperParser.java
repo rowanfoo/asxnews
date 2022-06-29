@@ -37,11 +37,11 @@ public class HotcopperParser implements AsxNewsParser {
         ArrayList<News> arrayList = new ArrayList<>();
 
         Document doc = Jsoup.parse(content);
-        //   System.out.println("-----------PARSE NEWS-------- " + doc);
+        //  System.out.println("-----------PARSE NEWS-------- " + doc);
 //        System.out.println("-----------PARSE NEWS-------- " + doc.select("table[class*=table is-fullwidth is-hidden-touch]").isEmpty());
-//
+////
 //        System.out.println("-----------PARSE NEWS-------- " + doc.select("table[class*=table is-fullwidth is-hidden-touch]").size());
-
+//
 
         Elements rows = doc.select("table[class*=table is-fullwidth is-hidden-touch]").get(0).select("tr");
         //  System.out.println("-----------PARSE row -------- "   + rows );
@@ -50,14 +50,17 @@ public class HotcopperParser implements AsxNewsParser {
             LocalDate localDate = null;
             if (!a.select("td").isEmpty()) {
 
-
+//                System.out.println("---------------------ele-text------- " + a);
 //                System.out.println("---------------------ele-SIZE------- " + a.select("td").size());
 //                System.out.println("---------------------ele-------- " + a.select("td").get(0).text());
 //                System.out.println("---------------------ele 1-------- " + a.select("td").get(1).text());
 //                System.out.println("---------------------ele 2-------- " + a.select("td").get(2).text());
 //                System.out.println("---------------------DATE ------ele 3-------- " + a.select("td").get(3).text());
-//                System.out.println("---------------------ele 4-------- " + a.select("td").get(4).text());
-//                System.out.println("---------------------ele 4-------- " + a.select("td").get(4).select("a").first().attr("href"));
+//                System.out.println("---------------------ele link-------- " + a.select("td").get(5).text());
+//                System.out.println("---------------------ele link-------- " + a.select("td").get(5));
+//                System.out.println("---------------------ele link-------- " + a.select("td").get(5).select("a"));
+//                System.out.println("---------------------ele link-------- " + a.select("td").get(5).select("a").attr("data-share-link"));
+//
 
                 try {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
@@ -77,7 +80,8 @@ public class HotcopperParser implements AsxNewsParser {
                 arrayList.add(News.builder()
                         .code(a.select("td").get(0).text() + ".AX")
                         .title(a.select("td").get(1).text())
-                        .link(baseurl + a.select("td").get(4).select("a").first().attr("href"))
+                        // .link(baseurl + a.select("td").get(4).select("a").first().attr("href"))
+                        .link(a.select("td").get(5).select("a").attr("data-share-link"))
                         .date(localDate).build());
             }
 
