@@ -3,6 +3,7 @@ package com.dharma.news.service;
 import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -15,13 +16,15 @@ public class HtmlPage {
     @Value("${url.base}")
     String baseurl;
 
-    @Autowired
-    WebDriver webdriver;
 
+    WebDriver webdriver;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     // No idea why hotcopper ,, cant lead the annoucement-1 page
     // got to load a any page first.
     public void loadbasePage() {
+        webdriver = applicationContext.getBean(WebDriver.class);
         webdriver.get(baseurl);
         webdriver.getPageSource();
     }
@@ -34,6 +37,10 @@ public class HtmlPage {
         //  System.out.println("------URL :" + url2);
         return webdriver.getPageSource();
 
+    }
+
+    public void close() {
+        webdriver.close();
     }
 
 
