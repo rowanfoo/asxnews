@@ -6,8 +6,10 @@ import com.dharma.news.data.repo.NewsRepo;
 import com.dharma.news.service.ElasticNewsWebService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.Iterator;
@@ -22,12 +24,12 @@ public class NewsFinderController {
     @Autowired
     NewsRepo newsRepo;
 
-    @GetMapping("/hello")
-    //@ApiOperation(value = "iindex page",  notes = "index html , search page")
-    public String hello(Model model, @RequestParam(value = "name", required = false, defaultValue = "World") String name) {
-        model.addAttribute("name", name);
-        return "hello";
-    }
+//    @GetMapping("/hello")
+//    //@ApiOperation(value = "iindex page",  notes = "index html , search page")
+//    public String hello(Model model, @RequestParam(value = "name", required = false, defaultValue = "World") String name) {
+//        model.addAttribute("name", name);
+//        return "hello";
+//    }
 
 
     @GetMapping("/news/code/{code}/date/{date}")
@@ -35,6 +37,16 @@ public class NewsFinderController {
         System.out.println("--------------search " + code);
         return newsRepo.findAll(QNews.news.code.eq(code).and(QNews.news.date.eq(LocalDate.parse(date))));
     }
+
+
+    @GetMapping("/news/code/{code}/month/{month}")
+    public Iterable<News> searchdate(@PathVariable String code, @PathVariable String month) {
+        System.out.println("--------------searchdate " + code);
+        LocalDate date = LocalDate.now().minusMonths(Long.parseLong(month));
+
+        return newsRepo.findAll(QNews.news.code.eq(code).and(QNews.news.date.gt(date)));
+    }
+
 
     @GetMapping("/news/code/{code}")
     public Iterator<News> code(@PathVariable String code) {
