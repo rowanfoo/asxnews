@@ -1,7 +1,5 @@
 package com.dharma.news;
 
-import com.dhamma.pesistence.entity.data.Portfolio;
-import com.dhamma.pesistence.entity.repo.PortfolioRepo;
 import com.dharma.news.data.entity.QNews;
 import com.dharma.news.data.repo.NewsRepo;
 import com.dharma.news.service.ElasticNewsService;
